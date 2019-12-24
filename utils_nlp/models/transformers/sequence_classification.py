@@ -294,7 +294,7 @@ class SequenceClassifier(Transformer):
             seed=seed,
         )
 
-    def predict(self, eval_dataloader, num_gpus=None, verbose=True):
+    def predict(self, eval_dataloader, num_gpus=None, verbose=True, return_max_prob=False, return_all_probs=False):
         """
         Scores a dataset using a fine-tuned model and a given dataloader.
 
@@ -319,4 +319,16 @@ class SequenceClassifier(Transformer):
         )
         preds = np.concatenate(preds)
         # todo generator & probs
-        return np.argmax(preds, axis=1)
+        pred_label = np.argmax(preds, axis=1)
+        
+        pred_prob = np.max(preds, axis=1)
+        
+        if return_max_prob:
+            
+            return [pred_label, pred_prob]
+        
+        if return_all_probs:
+            
+            return [pred_label, preds]
+        
+        return pred_label
